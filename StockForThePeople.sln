@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35728.132 d17.12
+VisualStudioVersion = 17.12.35728.132
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockForThePeople.WebApi", "StockForThePeople.WebApi\StockForThePeople.WebApi.csproj", "{17F9DF53-CAB1-43A1-B02E-740289DE5B49}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockForThePeople.ExternalData", "StockForThePeople.ExternalData\StockForThePeople.ExternalData.csproj", "{0CF3BDB7-A7A9-4034-8F3B-66518329BC05}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockForThePeople.WebApiExecuter", "StockForThePeople.WebApiExecuter\StockForThePeople.WebApiExecuter.csproj", "{8D7E0F44-1389-4F2C-8FCB-CBF0A1DD1842}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{17F9DF53-CAB1-43A1-B02E-740289DE5B49}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17F9DF53-CAB1-43A1-B02E-740289DE5B49}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{17F9DF53-CAB1-43A1-B02E-740289DE5B49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CF3BDB7-A7A9-4034-8F3B-66518329BC05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CF3BDB7-A7A9-4034-8F3B-66518329BC05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CF3BDB7-A7A9-4034-8F3B-66518329BC05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CF3BDB7-A7A9-4034-8F3B-66518329BC05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D7E0F44-1389-4F2C-8FCB-CBF0A1DD1842}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D7E0F44-1389-4F2C-8FCB-CBF0A1DD1842}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D7E0F44-1389-4F2C-8FCB-CBF0A1DD1842}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D7E0F44-1389-4F2C-8FCB-CBF0A1DD1842}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
