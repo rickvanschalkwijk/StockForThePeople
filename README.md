@@ -16,3 +16,17 @@ Questions like:
 
 
 
+Done:
+- Set up several projects to separate concerns from the get go.
+- Set up serilog
+- First version of domain models and external DTOs
+- ExternalData service receives and processes data
+
+Next:
+- Set up datacontext for Sqlite and store first data
+
+
+Patterns:
+- options pattern
+- service pattern
+- 

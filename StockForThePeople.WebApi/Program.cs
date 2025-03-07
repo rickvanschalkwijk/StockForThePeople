@@ -1,13 +1,47 @@
+using Microsoft.Extensions.Configuration;
+using Serilog;
+using StockForThePeople.ExternalData;
+using StockForThePeople.ExternalData.DTO;
+using StockForThePeople.WebApiExecuter;
 
 namespace StockForThePeople.WebApi;
 
+// I need a service that will update ticker information once per day.
+// I am not sure where it is supposed to live,
+// but for now I will add the service
+// inside the API project. There are probably better ways.
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
+        IConfiguration configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .AddUserSecrets<Program>()
+                .Build();
+
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
+        Log.Logger = new LoggerConfiguration() // needs Serilog.AspNetCore Nuget package
+               .ReadFrom.Configuration(configuration) // needs Serilog.Settings.Configuration Nuget package
+               .CreateLogger();
+
+        Serilog.Debugging.SelfLog.Enable(Console.Error);
+
+        builder.Host.UseSerilog();
+        builder.Logging.ClearProviders();
+        builder.Logging.AddConsole();
+        builder.Logging.AddDebug();
+        builder.Services.AddSerilog();
+
+
+        builder.Services.AddHttpClient();
+        builder.Services.Configure<ExternalDataConfigurationOptions>(
+            builder.Configuration.GetSection(key: "ExternalData"));
+        builder.Services.AddTransient<IWebApiExecuter, GenericWebApiExecuter>();
+        builder.Services.AddScoped<IExternalDataService, ExternalDataService>();
+
 
         builder.Services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -23,6 +57,8 @@ public class Program
             app.UseSwaggerUI();
         }
 
+        app.UseSerilogRequestLogging();
+
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
@@ -30,6 +66,8 @@ public class Program
 
         app.MapControllers();
 
+        //app.RunAsync();
         app.Run();
+
     }
 }

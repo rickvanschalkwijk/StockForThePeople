@@ -1,30 +1,38 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Serilog;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Runtime.InteropServices.Marshalling;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace StockForThePeople.WebApiExecuter;
 
-public class WebApiExecuter : IWebApiExecuter
+public class GenericWebApiExecuter : IWebApiExecuter
 {
     private readonly HttpClient _httpClient;
-    private readonly string _baseUrl;
-    private readonly string _apiKey;
+    private readonly ILogger<GenericWebApiExecuter> _logger;
 
-    public WebApiExecuter(string baseUrl, HttpClient httpClient, string apiKey)
+    public string BaseUrl { get; set; } = "";
+    public GenericWebApiExecuter(
+        ILogger<GenericWebApiExecuter> logger, 
+        HttpClient httpClient 
+        )
     {
-        _baseUrl = baseUrl;
         _httpClient = httpClient;
-        _apiKey = apiKey;
+        _logger = logger;
 
         _httpClient.DefaultRequestHeaders.Accept.Clear();
         _httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
     }
     public async Task<T> InvokeGetAsync<T>(string uri)
     {
+        _logger.LogInformation("{var1} - {var2}", nameof(GenericWebApiExecuter), nameof(InvokeGetAsync));
+
         return await _httpClient.GetFromJsonAsync<T>(GetUrl(uri));
     }
 
@@ -50,7 +58,7 @@ public class WebApiExecuter : IWebApiExecuter
 
     private string GetUrl(string uri)
     {
-        return $"{_baseUrl}/{uri}&token={_apiKey}";
+        return $"{BaseUrl}{uri}";
     }
 
 }
