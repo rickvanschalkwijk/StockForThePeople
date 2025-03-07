@@ -1,5 +1,7 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Serilog;
+using StockForThePeople.Data;
 using StockForThePeople.ExternalData;
 using StockForThePeople.ExternalData.DTO;
 using StockForThePeople.WebApiExecuter;
@@ -41,6 +43,11 @@ public class Program
             builder.Configuration.GetSection(key: "ExternalData"));
         builder.Services.AddTransient<IWebApiExecuter, GenericWebApiExecuter>();
         builder.Services.AddScoped<IExternalDataService, ExternalDataService>();
+
+        builder.Services.AddDbContext<StockForThePeopleSqliteContext>(options =>
+        {
+            options.UseSqlite(builder.Configuration.GetConnectionString("StockForThePeopleDb"));
+        });
 
 
         builder.Services.AddControllers();
