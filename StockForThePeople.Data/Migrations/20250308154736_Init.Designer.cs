@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StockForThePeople.Data;
 
@@ -10,9 +11,11 @@ using StockForThePeople.Data;
 namespace StockForThePeople.Data.Migrations
 {
     [DbContext(typeof(StockForThePeopleSqliteContext))]
-    partial class StockForThePeopleSqliteContextModelSnapshot : ModelSnapshot
+    [Migration("20250308154736_Init")]
+    partial class Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.2");

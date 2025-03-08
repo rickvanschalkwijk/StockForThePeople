@@ -21,9 +21,11 @@ Done:
 - Set up serilog
 - First version of domain models and external DTOs
 - ExternalData service receives and processes data
+- Set up first database from EF core
+- Use both postman and insomnia for testing
 
 Next:
-- Set up datacontext for Sqlite and store first data
+- Store first data
 
 
 Patterns:
