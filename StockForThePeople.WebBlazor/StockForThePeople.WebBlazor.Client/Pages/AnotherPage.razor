@@ -1,0 +1,18 @@
+﻿@page "/anotherpage"
+
+@inject HttpClient httpClient
+@inject IWebApiExecuter _api
+
+<h3>AnotherPage</h3>
+
+@code {
+    public List<MarketDto> MyProperty { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _api.BaseUrl = "https://localhost:7008";
+        string uri = "/api/Assets/market/TDIV.AS";
+        var x = await _api.InvokeGetAsync<AssetWithMarketGetDto>(uri);
+        Console.WriteLine("IEEEP");
+    }
+}

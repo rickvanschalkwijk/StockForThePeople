@@ -13,6 +13,7 @@ public class AssetsController : ControllerBase
     {
         _internalDataService = internalDataService;
     }
+
     [HttpGet]
     public async Task<IActionResult>GetAsync()
     {
@@ -26,5 +27,9 @@ public class AssetsController : ControllerBase
         return Ok(await _internalDataService.GetAssetByTickerAsync(ticker));
     }
 
-
+    [HttpGet("market/{ticker}")]
+    public async Task<IActionResult> GetMarketByTickerAsync(string ticker)
+    {
+        return Ok(await _internalDataService.GetMarketForAssetAsync(ticker));
+    }
 }

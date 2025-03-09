@@ -6,5 +6,6 @@ namespace StockForThePeople.InternalData
     {
         Task<List<AssetGetDtoList>> GetAllAssetsAsync();
         Task<AssetGetDto> GetAssetByTickerAsync(string ticker);
+        Task<AssetWithMarketGetDto> GetMarketForAssetAsync(string ticker);
     }
 }
