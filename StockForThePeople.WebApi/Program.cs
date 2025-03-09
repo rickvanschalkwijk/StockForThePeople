@@ -5,6 +5,7 @@ using Serilog;
 using StockForThePeople.Data;
 using StockForThePeople.ExternalData;
 using StockForThePeople.ExternalData.DTO;
+using StockForThePeople.InternalData;
 using StockForThePeople.WebApiExecuter;
 
 namespace StockForThePeople.WebApi;
@@ -44,6 +45,7 @@ public class Program
             builder.Configuration.GetSection(key: "ExternalData"));
         builder.Services.AddTransient<IWebApiExecuter, GenericWebApiExecuter>();
         builder.Services.AddScoped<IExternalDataService, ExternalDataService>();
+        builder.Services.AddScoped<IInternalDataService, InternalDataService>();
 
         builder.Services.AddDbContext<StockForThePeopleSqliteContext>(options =>
         {

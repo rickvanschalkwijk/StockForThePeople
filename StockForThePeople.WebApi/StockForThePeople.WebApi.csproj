@@ -23,11 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DTO\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\StockForThePeople.ExternalData\StockForThePeople.ExternalData.csproj" />
+    <ProjectReference Include="..\StockForThePeople.InternalData\StockForThePeople.InternalData.csproj" />
     <ProjectReference Include="..\StockForThePeople.WebApiExecuter\StockForThePeople.WebApiExecuter.csproj" />
   </ItemGroup>
 
