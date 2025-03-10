@@ -39,8 +39,15 @@ public class Program
         builder.Logging.AddDebug();
         builder.Services.AddSerilog();
 
-
         builder.Services.AddHttpClient();
+
+        builder.Services.AddCors(policy =>
+        {
+            policy.AddPolicy("okay", builder =>
+            builder.WithOrigins("*")
+            .SetIsOriginAllowedToAllowWildcardSubdomains()
+            .AllowAnyOrigin());
+        });
         builder.Services.Configure<ExternalDataConfigurationOptions>(
             builder.Configuration.GetSection(key: "ExternalData"));
         builder.Services.AddTransient<IWebApiExecuter, GenericWebApiExecuter>();
@@ -63,6 +70,8 @@ public class Program
             c.SwaggerDoc("v1", new OpenApiInfo { Title = "The API for Stock For The People", Version = "v1" });
         });
 
+
+
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -78,6 +87,7 @@ public class Program
 
         app.UseAuthorization();
 
+        app.UseCors("okay");
 
         app.MapControllers();
 

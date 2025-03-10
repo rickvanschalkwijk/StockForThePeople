@@ -2,8 +2,8 @@
 
 public class MarketDto
 {
-    public string Name { get; set; }
-    public double Value { get; set; }
+    public DateOnly Date { get; set; }
+    public decimal Value { get; set; }
     public double Volume { get; set; }
     public double VolumeDeviation { get; set; }
 }
