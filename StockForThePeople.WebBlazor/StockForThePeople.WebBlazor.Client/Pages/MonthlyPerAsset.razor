@@ -1,0 +1,58 @@
+﻿@page "/MonthlyPerAsset"
+@inject IWebApiExecuter _api
+
+<h3>Morningstar ETF Volumes per day</h3>
+
+<AssetSelector></AssetSelector>
+
+@if(volumes is not null){
+    <div class="d-inline-flex" style="border-style:dotted;border-width:thick;border-color:cyan;height:500px">
+        <LineChart Id="bar1" Type="@LineChart.ChartType.Line"
+        Data="volumes"
+        BackgroundColor="someColors"
+        Labels="dates">
+        </LineChart>
+    </div>
+
+    <ul>
+        @foreach(var item in MarketList)
+        {
+            <li>
+                @item.Date = @item.Volume = @item.VolumeDeviation = @item.Value
+            </li>
+        }
+    </ul>
+}
+
+
+
+@code{
+    public List<MarketDto> MarketList { get; set; } = new();
+
+    private string[] volumes ;
+    private string[] someColors = { "green" } ;
+    private string[] dates ;
+
+    protected override async Task OnInitializedAsync()
+    {
+        List<string> volumesList = new ();
+        List<string> datesList = new();
+        _api.BaseUrl = "https://localhost:7008";
+        string uri = "/api/Assets/market/TDIV.AS";
+        var x = await _api.InvokeGetAsync<AssetWithMarketGetDto>(uri);
+        foreach (var item in x.MarketHistory)
+        {
+            volumesList.Add(Math.Round(item.VolumeComparedToAverage /100,1).ToString());
+            datesList.Add(item.Date.ToString());
+            MarketList.Add(new MarketDto()
+            {
+                Date = item.Date,
+                Value = item.Value,
+                Volume = item.Volume,
+                VolumeDeviation = item.VolumeComparedToAverage
+            });
+            volumes = volumesList.ToArray();
+            dates = datesList.ToArray();
+        }
+    }
+}

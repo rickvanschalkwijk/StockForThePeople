@@ -1,4 +1,4 @@
-﻿namespace StockForThePeople.WebBlazor.client.DTO;
+﻿namespace StockForThePeople.WebBlazor.Client.DTO;
 
 public class MarketDto
 {

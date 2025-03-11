@@ -1,0 +1,64 @@
+﻿@inject ILogger<AssetSelector> _logger
+
+@if (AssetList is not null && AssetList.Count > 0)
+{
+    <ul>
+        @foreach (var item in AssetList)
+        {
+            <li>@item.Ticker</li>
+        }
+    </ul>
+    <select class="dropdown" @onchange="HandleSelectionChange">
+        <option value="SelectedAssetTicker" selected disabled="disabled">(Choose)</option>
+        @foreach (var item in AssetList)
+        {
+            <option value="@item.Ticker">@item.Name</option>
+        }
+    </select>
+         <InputSelect class="dropdown" @bind-Value="SelectedAssetTicker" @onchange="HandleSelectionChange">
+        @foreach (var option in AssetList)
+        {
+            <option class="dropdown-item" value="@option.Ticker">@option.Name</option>
+        }
+    </InputSelect> 
+    <button type="button" @onclick="HandleButtonClicked">clickme</button>
+
+    @if(SelectedAssetTicker is not null)
+    {
+        <div>you chose this: @SelectedAssetTicker</div>
+    }
+
+}
+else
+{
+    <div class="text-warning">There are no available assets to select from. (check why the values became unavailable after refresh.)</div>
+}
+
+
+@code {
+    [CascadingParameter(Name = "AssetList")]
+    public List<AssetGetDtoList> AssetList { get; set; }
+
+    [Parameter]
+    public string SelectedAssetTicker { get; set; }
+
+    private void HandleButtonClicked()
+    {
+        _logger.LogInformation("Button clicked");
+    }
+
+    private void HandleSelectionChange(ChangeEventArgs e)
+    {
+        // not being called when selecting?
+        _logger.LogError("Fing hell: {var}", e.Value.ToString() );
+        SelectedAssetTicker = e.Value.ToString();
+    }
+
+    protected override Task OnParametersSetAsync()
+    {
+        _logger.LogInformation("What is the current value of the parameters?");
+        _logger.LogInformation($"Is there a thing like the first element? => {AssetList?[0].Name}");
+        _logger.LogInformation("Is there a selected value? -> {var}", SelectedAssetTicker);
+        return base.OnParametersSetAsync();
+    }
+}

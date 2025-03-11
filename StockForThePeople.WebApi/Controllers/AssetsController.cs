@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using StockForThePeople.InternalData;
 
 namespace StockForThePeople.WebApi.Controllers;
@@ -14,6 +15,7 @@ public class AssetsController : ControllerBase
         _internalDataService = internalDataService;
     }
 
+    [OutputCache(PolicyName = "Expire300")]
     [HttpGet]
     public async Task<IActionResult>GetAsync()
     {
@@ -21,12 +23,14 @@ public class AssetsController : ControllerBase
     }
 
     // Get api/<Assets>/Tickercode
+    [OutputCache(PolicyName = "Expire300")]
     [HttpGet("{ticker}")]
     public async Task<IActionResult> GetByTickerAsync(string ticker)
     {
         return Ok(await _internalDataService.GetAssetByTickerAsync(ticker));
     }
 
+    [OutputCache(PolicyName = "Expire300")]
     [HttpGet("market/{ticker}")]
     public async Task<IActionResult> GetMarketByTickerAsync(string ticker)
     {

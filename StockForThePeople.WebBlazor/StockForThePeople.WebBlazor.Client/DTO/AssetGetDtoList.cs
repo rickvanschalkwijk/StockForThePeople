@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace StockForThePeople.WebBlazor.Client.DTO;
 
-public class AssetWithMarketGetDto
+public class AssetGetDtoList
 {
-    public AssetGetDto Asset { get; init; }
-    public List<MarketGetDto> MarketHistory { get; init; } = new();
+    public string Name { get; set; }
+    public string Ticker { get; set; }
 }

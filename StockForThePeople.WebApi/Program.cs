@@ -12,8 +12,9 @@ namespace StockForThePeople.WebApi;
 
 // I need a service that will update ticker information once per day.
 // I am not sure where it is supposed to live,
-// but for now I will add the service
-// inside the API project. There are probably better ways.
+// but for now I will just reference the service
+// inside the API project and not update automatically.
+// There are probably better ways.
 public class Program
 {
     public static async Task Main(string[] args)
@@ -43,7 +44,7 @@ public class Program
 
         builder.Services.AddCors(policy =>
         {
-            policy.AddPolicy("okay", builder =>
+            policy.AddPolicy("allowAll", builder =>
             builder.WithOrigins("*")
             .SetIsOriginAllowedToAllowWildcardSubdomains()
             .AllowAnyOrigin());
@@ -70,6 +71,25 @@ public class Program
             c.SwaggerDoc("v1", new OpenApiInfo { Title = "The API for Stock For The People", Version = "v1" });
         });
 
+        builder.Services.AddOutputCache(options =>
+        {
+            options.AddBasePolicy(builder =>
+            {
+                builder.Expire(TimeSpan.FromSeconds(10));
+            });
+            options.AddPolicy("Expire30", builder =>
+            {
+                builder.Expire(TimeSpan.FromSeconds(30));
+                builder.Tag("TagHandleForExpire30Policy");
+            });
+            options.AddPolicy("Expire300", builder =>
+            {
+                builder.Expire(TimeSpan.FromSeconds(300));
+                builder.SetLocking(true);
+                builder.Tag("TagHandleForExpire300Policy");
+            });
+        });
+
 
 
         var app = builder.Build();
@@ -87,7 +107,9 @@ public class Program
 
         app.UseAuthorization();
 
-        app.UseCors("okay");
+        app.UseCors("allowAll");
+
+        app.UseOutputCache();
 
         app.MapControllers();
 

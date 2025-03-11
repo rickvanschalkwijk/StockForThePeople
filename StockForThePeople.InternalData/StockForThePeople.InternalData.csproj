@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="DTO\AssetGetDtoList" />
+    <None Include="DTO\AssetGetDtoList.cs" />
   </ItemGroup>
 
   <ItemGroup>

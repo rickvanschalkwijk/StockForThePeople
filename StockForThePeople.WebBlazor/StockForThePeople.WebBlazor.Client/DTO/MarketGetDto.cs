@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StockForThePeople.WebBlazor.client.DTO;
+namespace StockForThePeople.WebBlazor.Client.DTO;
 
 public class MarketGetDto
 {
