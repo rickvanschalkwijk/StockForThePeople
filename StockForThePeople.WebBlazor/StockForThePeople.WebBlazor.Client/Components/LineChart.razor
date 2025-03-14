@@ -1,5 +1,6 @@
 ﻿@inject IJSRuntime JSRuntime
 @inject ILogger<LineChart> _logger
+@implements IDisposable
 
 <canvas id="@Id"></canvas>
 
@@ -28,36 +29,79 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        // Here we create an anonymous type with all the options
-        // that need to be sent to Chart.js
-        var config = new
+        if (firstRender)
         {
-            Type = Type.ToString().ToLower(),
-            Options = new
+            // Here we create an anonymous type with all the options
+            // that need to be sent to Chart.js
+            var config = new
             {
-                Responsive = true,
-                Scales = new
+                Type = Type.ToString().ToLower(),
+                Options = new
                 {
-                    YAxes = new[]
+                    plugins = new
                     {
-                        new { Ticks = new {
-                            BeginAtZero=true
-                        } }
+                        Title = new
+                        {
+                            Text = "Deze",
+                            Display = true
+                        }
+                    },
+                    Responsive = true,
+                    Scales = new
+                    {
+                        YAxis = new
+                        {
+                            Title = new { Display = true, Text = "Blaaat" },
+                            //Max = 40,
+                            Display = true,
+                            BackgroundColor = "#9BD0F5",
+                            Text = "Whever",
+                            Ticks = new
+                            {
+                                BeginAtZero = true,
+                                StepSize = 0.2
+                            }
+                        },
+                        Y = new
+                        {
+                            Display = false
+                        }
+
                     }
-                }
-            },
-            Data = new
-            {
-                Datasets = new[]
-                {
-                    new { Data = Data, BorderColor = BackgroundColor, Stepped = "middle"}
                 },
-                Labels = Labels
-            }
-        };
+                Data = new
+                {
+                    Datasets = new[]
+                    {
 
-        _logger.LogInformation("{var1} - {var2} - Available Data: {var3}",nameof(LineChart), nameof(OnAfterRenderAsync), Data[0]);
+                    new {
+                        Data = Data,
+                        BorderColor = BackgroundColor,
+                        Stepped = "middle",
+                        YAxisId = "YAxis",
+                        Text = "Dan deze",
+                        Label = "Dit Label"
+                    }
+                },
+                    Labels = Labels
+                }
+            };
 
-        await JSRuntime.InvokeVoidAsync("setup", Id, config);
+            _logger.LogInformation("{var1} - {var2} - Available Data inside the component: {var3}", nameof(LineChart), nameof(OnAfterRenderAsync), Data[0]);
+            _logger.LogInformation("The Id for the canvas is {var1}", Id);
+            // with Chart.js and blazor you really only want to new up a chart
+            // after first render.
+            // also removal can be done right before newing up.
+            await JSRuntime.InvokeVoidAsync("clean");
+            await JSRuntime.InvokeVoidAsync("setup", Id, config);
+        }
+    }
+
+    public async void Dispose()
+    {
+
+        // Call JavaScript to destroy the chart
+        await JSRuntime.InvokeVoidAsync("dispose");
+
     }
 }

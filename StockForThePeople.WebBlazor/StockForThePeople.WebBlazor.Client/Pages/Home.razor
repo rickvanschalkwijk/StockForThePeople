@@ -1,7 +1,26 @@
 ﻿@page "/"
+@inject ILogger<Home> _logger
 
 <PageTitle>Home</PageTitle>
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
+
+@if(Assets is not null)
+{
+    @foreach(var item in Assets){
+        <p>@item.Ticker</p>
+    }
+}
+<button type="button" @onclick="HandleClick">clickme</button>
+
+@code{
+    [CascadingParameter(Name = "AssetList")]
+    public List<AssetGetDtoList> Assets { get; set; }
+
+    private void HandleClick()
+    {
+        _logger.LogInformation("How many elements in main? {var}", Assets.Count);
+    }
+}

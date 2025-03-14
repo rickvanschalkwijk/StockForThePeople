@@ -1,7 +1,7 @@
 ﻿@inherits LayoutComponentBase
-@inject IWebApiExecuter _api
-@inject IConfiguration configuration
 @inject ILogger<MainLayout> _logger
+@inject IWebApiExecuter _api
+@inject StockForThePeopleSettings _stockForThePeopleSettings
 
 <div class="page">
     <div class="sidebar">
@@ -11,9 +11,10 @@
     <main>
 
         <article class="content px-4">
-            <CascadingValue Value="knownAssets" Name="AssetList">
+            <CascadingValue Value="assetGetDtoList" Name="AssetList">
                 @Body
             </CascadingValue>
+
         </article>
     </main>
 </div>
@@ -25,14 +26,13 @@
 </div>
 
 @code {
-    private List<AssetGetDtoList> knownAssets;
+    private List<AssetGetDtoList> assetGetDtoList;
 
     protected override async Task OnInitializedAsync()
     {
-        _logger.LogInformation("{var1} - {var2} - Called", nameof(MainLayout), nameof(OnInitializedAsync));
-        _api.BaseUrl = configuration.GetValue<string>("StockForThePeopleApi:BaseUrl");
-        string uri = configuration.GetValue<string>("StockForThePeopleApi:AssetListUri");
-        knownAssets = await _api.InvokeGetAsync<List<AssetGetDtoList>>(uri);
-
+        string baseUrl = _stockForThePeopleSettings.BaseUrl;
+        _api.BaseUrl = baseUrl;
+        string uri = _stockForThePeopleSettings.AssetListUri;
+        assetGetDtoList = await _api.InvokeGetAsync<List<AssetGetDtoList>>(uri);
     }
 }

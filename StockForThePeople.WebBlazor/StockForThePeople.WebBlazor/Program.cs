@@ -1,4 +1,5 @@
 using StockForThePeople.WebApiExecuter;
+using StockForThePeople.WebBlazor.Client;
 using StockForThePeople.WebBlazor.Client.Pages;
 using StockForThePeople.WebBlazor.Components;
 
@@ -12,7 +13,14 @@ namespace StockForThePeople.WebBlazor
 
             // Add services to the container.
             builder.Services.AddHttpClient();
-            builder.Services.AddScoped<IWebApiExecuter, GenericWebApiExecuter>();
+            builder.Services.AddTransient<IWebApiExecuter, GenericWebApiExecuter>();
+            StockForThePeopleSettings stockForThePeopleSettings = new StockForThePeopleSettings()
+            {
+                BaseUrl = builder.Configuration.GetValue<string>("StockForThePeopleApi:BaseUrl"),
+                AssetListUri = builder.Configuration.GetValue<string>("StockForThePeopleApi:AssetListUri"),
+                MarketByTickerUri = builder.Configuration.GetValue<string>("StockForThePeopleApi:MarketByTickerUri")
+            };
+            builder.Services.AddSingleton(stockForThePeopleSettings);
 
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents()

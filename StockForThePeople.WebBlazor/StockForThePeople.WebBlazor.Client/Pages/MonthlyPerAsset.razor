@@ -1,58 +1,80 @@
 ﻿@page "/MonthlyPerAsset"
 @inject IWebApiExecuter _api
+@inject StockForThePeopleSettings _stockForThePeopleSettings
 
-<h3>Morningstar ETF Volumes per day</h3>
 
-<AssetSelector></AssetSelector>
+<h3>Volume Growth and Shrinking per day</h3>
 
-@if(volumes is not null){
-    <div class="d-inline-flex" style="border-style:dotted;border-width:thick;border-color:cyan;height:500px">
-        <LineChart Id="bar1" Type="@LineChart.ChartType.Line"
+<AssetSelector ValueChanged="SelectedTickerHandler">
+</AssetSelector>
+
+@if (volumes is not null && selectedTicker is not null)
+{
+    <div class="d-inline-flex" style="border-style:dotted;border-width:thick;border-color:cyan;height:600px">
+        <LineChart Id=0 Type="@LineChart.ChartType.Line"
         Data="volumes"
-        BackgroundColor="someColors"
+        BackgroundColor="lineColors"
         Labels="dates">
         </LineChart>
     </div>
-
-    <ul>
-        @foreach(var item in MarketList)
-        {
-            <li>
-                @item.Date = @item.Volume = @item.VolumeDeviation = @item.Value
-            </li>
-        }
-    </ul>
 }
 
+@if (selectedTicker is not null)
+{
+    <div class="text-warning">By the power of greyskull: @selectedTicker </div>
+}
 
-
-@code{
+@code {
     public List<MarketDto> MarketList { get; set; } = new();
 
-    private string[] volumes ;
-    private string[] someColors = { "green" } ;
-    private string[] dates ;
+    private string[] volumes;
+    private string[] lineColors = { "green" };
+    private string[] dates;
+    
+
+    [Parameter]
+    public string selectedTicker { get; set; }
+
+    private string basicUri;
+    private string fullUri;
+
+    private async Task SelectedTickerHandler(string selected)
+    {
+        volumes = null;
+        StateHasChanged();
+
+        selectedTicker = selected;
+        fullUri = basicUri + selected;
+        List<string> volumesList = new();
+        List<string> datesList = new();
+        if (fullUri is not null)
+        {
+            _api.BaseUrl = _stockForThePeopleSettings.BaseUrl;
+            var x = await _api.InvokeGetAsync<AssetWithMarketGetDto>(fullUri);
+            foreach (var item in x.MarketHistory)
+            {
+                volumesList.Add(Math.Round(item.VolumeComparedToAverage / 100, 1).ToString());
+                datesList.Add(item.Date.ToString());
+                MarketList.Add(new MarketDto()
+                    {
+                        Date = item.Date,
+                        Value = item.Value,
+                        Volume = item.Volume,
+                        VolumeDeviation = item.VolumeComparedToAverage
+                    });
+                volumes = volumesList.ToArray();
+                dates = datesList.ToArray();
+                
+
+            }
+        }
+        StateHasChanged();
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        List<string> volumesList = new ();
-        List<string> datesList = new();
-        _api.BaseUrl = "https://localhost:7008";
-        string uri = "/api/Assets/market/TDIV.AS";
-        var x = await _api.InvokeGetAsync<AssetWithMarketGetDto>(uri);
-        foreach (var item in x.MarketHistory)
-        {
-            volumesList.Add(Math.Round(item.VolumeComparedToAverage /100,1).ToString());
-            datesList.Add(item.Date.ToString());
-            MarketList.Add(new MarketDto()
-            {
-                Date = item.Date,
-                Value = item.Value,
-                Volume = item.Volume,
-                VolumeDeviation = item.VolumeComparedToAverage
-            });
-            volumes = volumesList.ToArray();
-            dates = datesList.ToArray();
-        }
+        _api.BaseUrl = _stockForThePeopleSettings.BaseUrl;
+        basicUri = _stockForThePeopleSettings.MarketByTickerUri;
     }
+
 }
