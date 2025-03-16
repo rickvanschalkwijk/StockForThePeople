@@ -7,6 +7,11 @@ using System.Threading.Tasks;
 
 namespace StockForThePeople.Domain.Models;
 
+
+// Idea here:
+// be able to store per user what their allocations are at a moment in time
+// that way it can become clear which part of portfolio growth is because of
+// OOP money and which part is because of actual asset value growth.
 public class UserTransaction : BaseModel
 {
     public Guid UserId { get; set; }

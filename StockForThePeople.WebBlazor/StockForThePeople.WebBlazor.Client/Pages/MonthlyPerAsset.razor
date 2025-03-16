@@ -1,36 +1,33 @@
 ﻿@page "/MonthlyPerAsset"
+@page "/"
+@using System.Globalization
 @inject IWebApiExecuter _api
 @inject StockForThePeopleSettings _stockForThePeopleSettings
+@inject ILogger<MonthlyPerAsset> _logger
 
+<h3>Volumes versus Koers per dag</h3>
+De gedachte is: er moet een herleidbaar verband zijn tussen de koerstontwikkeling van een aandeel en de hoeveelheid verhandelde aandelen.
+Nou, dat is dus niet zomaar overduidelijk te zien.
 
-<h3>Volume Growth and Shrinking per day</h3>
-
-<AssetSelector ValueChanged="SelectedTickerHandler">
-</AssetSelector>
+<AssetSelector ValueChanged="SelectedTickerHandler" />
 
 @if (volumes is not null && selectedTicker is not null)
 {
     <div class="d-inline-flex" style="border-style:dotted;border-width:thick;border-color:cyan;height:600px">
         <LineChart Id=0 Type="@LineChart.ChartType.Line"
-        Data="volumes"
-        BackgroundColor="lineColors"
-        Labels="dates">
+                    AssetName=@singleAssetWithMarketData.Asset.Name
+                   Volumes="volumes"
+                   Values="values"
+                   Labels="dates">
         </LineChart>
     </div>
 }
 
-@if (selectedTicker is not null)
-{
-    <div class="text-warning">By the power of greyskull: @selectedTicker </div>
-}
-
 @code {
-    public List<MarketDto> MarketList { get; set; } = new();
-
-    private string[] volumes;
-    private string[] lineColors = { "green" };
+    private AssetWithMarketGetDto singleAssetWithMarketData;
+    private double[] volumes;
+    private double[] values;
     private string[] dates;
-    
 
     [Parameter]
     public string selectedTicker { get; set; }
@@ -40,35 +37,31 @@
 
     private async Task SelectedTickerHandler(string selected)
     {
-        volumes = null;
-        StateHasChanged();
 
         selectedTicker = selected;
         fullUri = basicUri + selected;
-        List<string> volumesList = new();
+        List<double> volumesList = new();
         List<string> datesList = new();
+        List<double> valuesList = new();
+
         if (fullUri is not null)
         {
+            _logger.LogInformation("calling elvis");
             _api.BaseUrl = _stockForThePeopleSettings.BaseUrl;
-            var x = await _api.InvokeGetAsync<AssetWithMarketGetDto>(fullUri);
-            foreach (var item in x.MarketHistory)
+            
+            singleAssetWithMarketData = await _api.InvokeGetAsync<AssetWithMarketGetDto>(fullUri);
+            foreach (var item in singleAssetWithMarketData.MarketHistory)
             {
-                volumesList.Add(Math.Round(item.VolumeComparedToAverage / 100, 1).ToString());
+                //volumesList.Add(Math.Round(item.VolumeComparedToAverage / 100, 1).ToString(CultureInfo.CreateSpecificCulture("en-US")));
+                volumesList.Add(Math.Round(item.VolumeComparedToAverage / 100, 1));
+                //valuesList.Add(item.Value.ToString(CultureInfo.CreateSpecificCulture("en-US")));
+                valuesList.Add((double)item.Value);
                 datesList.Add(item.Date.ToString());
-                MarketList.Add(new MarketDto()
-                    {
-                        Date = item.Date,
-                        Value = item.Value,
-                        Volume = item.Volume,
-                        VolumeDeviation = item.VolumeComparedToAverage
-                    });
-                volumes = volumesList.ToArray();
-                dates = datesList.ToArray();
-                
-
             }
+            volumes = volumesList.ToArray();
+            values = valuesList.ToArray();
+            dates = datesList.ToArray();
         }
-        StateHasChanged();
     }
 
     protected override async Task OnInitializedAsync()
